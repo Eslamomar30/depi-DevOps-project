@@ -1,0 +1,80 @@
+- name: Install and configure SonarQube
+  hosts: sonarqube
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - unzip
+          - openjdk-17-jdk
+          - wget
+          - postgresql
+          - postgresql-contrib
+        state: present
+
+    - name: Create sonar user
+      user:
+        name: sonar
+        shell: /bin/bash
+        system: yes
+        create_home: yes
+
+    - name: Download SonarQube
+      get_url:
+        url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.3.0.82913.zip
+        dest: /opt/sonarqube.zip
+        mode: "0644"
+
+    - name: Unzip SonarQube
+      unarchive:
+        src: /opt/sonarqube.zip
+        dest: /opt
+        remote_src: yes
+
+    - name: Rename extracted folder
+      command: mv /opt/sonarqube-* /opt/sonarqube
+      args:
+        creates: /opt/sonarqube
+
+    - name: Set correct ownership
+      file:
+        path: /opt/sonarqube
+        owner: sonar
+        group: sonar
+        recurse: yes
+
+    - name: Configure systemd service
+      copy:
+        dest: /etc/systemd/system/sonarqube.service
+        content: |
+          [Unit]
+          Description=SonarQube service
+          After=syslog.target network.target
+
+          [Service]
+          Type=forking
+          ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+          ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+          User=sonar
+          Group=sonar
+          Restart=always
+          LimitNOFILE=65536
+          LimitNPROC=4096
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start SonarQube
+      systemd:
+        name: sonarqube
+        enabled: yes
+        state: started

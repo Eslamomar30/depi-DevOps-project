@@ -1,0 +1,87 @@
+# ---------------------------------
+# Node.js
+# ---------------------------------
+# backend & frontend
+/backend/node_modules/
+/frontend/node_modules/
+
+# lockfiles
+package-lock.json
+yarn.lock
+
+# environment files
+*.env
+.env.*
+
+# ---------------------------------
+# Logs
+# ---------------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+logs/
+debug.log*
+
+# ---------------------------------
+# Terraform
+# ---------------------------------
+/terraform/.terraform/
+/terraform/*.tfstate
+/terraform/*.tfstate.*
+terraform.tfstate.backup
+.terraform.lock.hcl
+
+# ---------------------------------
+# Ansible
+# ---------------------------------
+# retry files
+*.retry
+# inventory cache
+/ansible/.cache/
+# python bytecode
+__pycache__/
+*.pyc
+
+# ---------------------------------
+# Kubernetes
+# ---------------------------------
+# local kubectl config
+~/.kube/
+/k8s/*.lock
+
+# ---------------------------------
+# Docker
+# ---------------------------------
+# for local compose overrides etc.
+docker-compose.override.yml
+*.tar
+docker_image.tar
+
+# ---------------------------------
+# IDEs & Editors
+# ---------------------------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# ---------------------------------
+# Miscellaneous
+# ---------------------------------
+# Built frontend
+/frontend/dist/
+/frontend/build/
+
+# coverage reports
+coverage/
+*.lcov
+

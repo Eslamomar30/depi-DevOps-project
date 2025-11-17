@@ -1,0 +1,83 @@
+---
+- name: Install Jenkins plugins using Jenkins CLI (inline, OTP-based)
+  hosts: jenkins
+  become: yes
+
+  vars:
+    jenkins_url: http://localhost:8080
+    jenkins_cli_path: /tmp/jenkins-cli.jar
+    jenkins_user: admin
+    plugin_list:
+      - git
+      - docker-plugin
+      - workflow-aggregator
+      - nodejs
+      - kubernetes
+      - sonar
+      - credentials-binding
+      - aws-credentials
+
+  tasks:
+    - name: Ensure Java is installed
+      apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: yes
+
+    - name: Wait for Jenkins to be available
+      uri:
+        url: "{{ jenkins_url }}/login"
+        method: GET
+        status_code: 200
+        validate_certs: no
+      register: jenkins_ready
+      retries: 10
+      delay: 5
+      until: jenkins_ready.status == 200
+
+    - name: Read Jenkins initial admin password
+      slurp:
+        src: /var/lib/jenkins/secrets/initialAdminPassword
+      register: jenkins_otp
+
+    - name: Update Jenkins plugin metadata using command module
+      command:
+        argv:
+          - java
+          - -jar
+          - "{{ jenkins_cli_path }}"
+          - -s
+          - "{{ jenkins_url }}"
+          - -http
+          - -auth
+          - "{{ jenkins_user }}:{{ jenkins_otp.content | b64decode | trim }}"
+          - list-plugins
+
+    - name: Install Jenkins plugins using CLI
+      command:
+        argv:
+          - java
+          - -jar
+          - "{{ jenkins_cli_path }}"
+          - -s
+          - "{{ jenkins_url }}"
+          - -http
+          - -auth
+          - "{{ jenkins_user }}:{{ jenkins_otp.content | b64decode | trim }}"
+          - install-plugin
+          - "{{ item }}"
+          - -deploy
+      loop: "{{ plugin_list }}"
+
+    - name: Restart Jenkins to apply plugin changes
+      command:
+        argv:
+          - java
+          - -jar
+          - "{{ jenkins_cli_path }}"
+          - -s
+          - "{{ jenkins_url }}"
+          - -http
+          - -auth
+          - "{{ jenkins_user }}:{{ jenkins_otp.content | b64decode | trim }}"
+          - safe-restart

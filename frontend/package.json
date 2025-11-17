@@ -1,0 +1,51 @@
+{
+  "name": "material-tailwind-dashboard-react",
+  "private": true,
+  "version": "2.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@heroicons/react": "2.0.18",
+    "@material-tailwind/react": "2.1.4",
+    "@mui/material": "^7.1.0",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-pdf-viewer/thumbnail": "^3.12.0",
+    "apexcharts": "3.44.0",
+    "axios": "^1.9.0",
+    "js-cookie": "^3.0.5",
+    "pdfjs-dist": "^2.11.338",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-apexcharts": "1.4.1",
+    "react-dom": "18.2.0",
+    "react-loading-skeleton": "^3.5.0",
+    "react-pdf": "^9.2.1",
+    "react-router-dom": "6.17.0",
+    "react-toastify": "^11.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "@types/react": "18.2.31",
+    "@types/react-dom": "18.2.14",
+    "@vitejs/plugin-react": "4.1.0",
+    "autoprefixer": "10.4.16",
+    "eslint": "^9.26.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.1.0",
+    "postcss": "8.4.31",
+    "prettier": "3.0.3",
+    "prettier-plugin-tailwindcss": "0.5.6",
+    "tailwindcss": "3.3.4",
+    "vite": "4.5.0"
+  }
+}

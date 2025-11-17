@@ -1,0 +1,25 @@
+- name: Install and configure CloudWatch Agent
+  hosts: all_ec2
+  become: yes
+  vars:
+    aws_region: "us-east-1"
+  tasks:
+    - name: Download CloudWatch Agent package
+      get_url:
+        url: "https://s3.{{ aws_region }}.amazonaws.com/amazoncloudwatch-agent-{{ aws_region }}/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb"
+        dest: /tmp/amazon-cloudwatch-agent.deb
+
+    - name: Install CloudWatch Agent
+      apt:
+        deb: /tmp/amazon-cloudwatch-agent.deb
+        update_cache: yes
+
+    - name: Copy CloudWatch configuration
+      copy:
+        src: files/cloudwatch-config.json
+        dest: /opt/aws/amazon-cloudwatch-agent/bin/config.json
+
+    - name: Start CloudWatch Agent
+      command: >-
+        /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
+        -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s

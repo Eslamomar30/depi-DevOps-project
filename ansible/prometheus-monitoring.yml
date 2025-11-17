@@ -1,0 +1,107 @@
+---
+- name: Deploy Prometheus + Grafana Monitoring Stack
+  hosts: localhost
+  gather_facts: false
+  vars:
+    namespace: monitoring
+    slack_webhook_url: "{{ lookup('env', 'SLACK_WEBHOOK_URL') }}"
+    alert_rule_file: /tmp/alerts.yaml
+    alertmanager_secret_file: /tmp/alertmanager-config.yaml
+
+  tasks:
+    - name: Add Prometheus Helm repo
+      command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      ignore_errors: true
+
+    - name: Update Helm repos
+      command: helm repo update
+
+    - name: Create monitoring namespace
+      command: kubectl create namespace {{ namespace }}
+      register: ns_create
+      failed_when: false
+
+    - name: Deploy kube-prometheus-stack
+      command: >
+        helm install monitoring prometheus-community/kube-prometheus-stack
+        --namespace {{ namespace }}
+        --set grafana.service.type=LoadBalancer
+      args:
+        creates: /tmp/prometheus_installed
+      register: helm_result
+
+    - name: Mark helm install
+      file:
+        path: /tmp/prometheus_installed
+        state: touch
+      when: helm_result is succeeded
+
+    - name: Create CPU & Memory usage alert rules YAML
+      copy:
+        dest: "{{ alert_rule_file }}"
+        content: |
+          apiVersion: monitoring.coreos.com/v1
+          kind: PrometheusRule
+          metadata:
+            name: pod-usage-alerts
+            namespace: monitoring
+          spec:
+            groups:
+              - name: pod-usage
+                rules:
+                  - alert: HighPodCPU
+                    expr: sum(rate(container_cpu_usage_seconds_total{container!="",pod!=""}[5m])) by (pod) > 0.8
+                    for: 2m
+                    labels:
+                      severity: warning
+                    annotations:
+                      summary: "High CPU usage on pod {{ '{{' }} $labels.pod {{ '}}' }}"
+                      description: "{{ '{{' }} $labels.pod {{ '}}' }} CPU usage > 80% for more than 2 minutes."
+
+                  - alert: HighPodMemory
+                    expr: sum(container_memory_usage_bytes{container!="",pod!=""}) by (pod) /
+                          sum(kube_pod_container_resource_limits_memory_bytes{container!="",pod!=""}) by (pod) > 0.8
+                    for: 2m
+                    labels:
+                      severity: warning
+                    annotations:
+                      summary: "High Memory usage on pod {{ '{{' }} $labels.pod {{ '}}' }}"
+                      description: "{{ '{{' }} $labels.pod {{ '}}' }} memory usage > 80% for more than 2 minutes."
+
+    - name: Apply Alert Rules
+      command: kubectl apply -f {{ alert_rule_file }}
+
+    - name: Create AlertManager Slack config
+      copy:
+        dest: "{{ alertmanager_secret_file }}"
+        content: |
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: alertmanager-monitoring-kube-prometheus-stack-alertmanager
+            namespace: monitoring
+            labels:
+              app: kube-prometheus-stack-alertmanager
+          type: Opaque
+          stringData:
+            alertmanager.yaml: |
+              global:
+                resolve_timeout: 5m
+              route:
+                receiver: 'slack-notifications'
+                group_wait: 10s
+                group_interval: 10s
+                repeat_interval: 1h
+              receivers:
+                - name: 'slack-notifications'
+                  slack_configs:
+                    - channel: '#test'
+                      send_resolved: true
+                      api_url: '{{ slack_webhook_url }}'
+
+    - name: Apply AlertManager Secret
+      command: kubectl apply -f {{ alertmanager_secret_file }}
+
+    - name: Restart Alertmanager Pods
+      command: kubectl delete pod -l app.kubernetes.io/name=alertmanager -n {{ namespace }}
+      ignore_errors: true

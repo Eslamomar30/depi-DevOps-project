@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: ADMIN_USERNAME
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: ADMIN_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: JWT_SECRET
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_REGION
+            - name: S3_CERTIFICATES_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: S3_CERTIFICATES_BUCKET

@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. Variable font (covers weight 200–900, slant axis) */
+@font-face {
+  font-family: 'CairoVariable';
+  src: url('/fonts/Cairo-VariableFont_slnt,wght.ttf') format('truetype-variations');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 2. Static fallbacks for maximum compatibility */
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-Light.ttf') format('truetype');  font-weight: 300; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-Regular.ttf') format('truetype');  font-weight: 400; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-Medium.ttf') format('truetype');   font-weight: 500; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-SemiBold.ttf') format('truetype'); font-weight: 600; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-Bold.ttf') format('truetype');     font-weight: 700; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-ExtraBold.ttf') format('truetype');font-weight: 800; }
+@font-face { font-family: 'Cairo'; src: url('/fonts/Cairo-Black.ttf') format('truetype');    font-weight: 900; }
+
+/* 3. Apply it globally */
+html {
+  direction: rtl;
+  font-family: 'CairoVariable', 'Cairo', sans-serif;
+}

@@ -1,0 +1,103 @@
+---
+- name: Install required CI/CD tools for Jenkins pipeline
+  hosts: jenkins
+  become: yes
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Add Jenkins user to Docker group
+      user:
+        name: jenkins
+        groups: docker
+        append: yes
+
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install unzip and curl
+      apt:
+        name:
+          - unzip
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Download AWS CLI v2
+      get_url:
+        url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+        dest: /tmp/awscliv2.zip
+
+    - name: Unzip AWS CLI installer
+      unarchive:
+        src: /tmp/awscliv2.zip
+        dest: /tmp
+        remote_src: yes
+
+    - name: Install AWS CLI
+      command: /tmp/aws/install
+      args:
+        creates: /usr/local/bin/aws
+
+    - name: Install Helm
+      shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        executable: /bin/bash
+        creates: /usr/local/bin/helm
+
+    - name: Install Trivy using official install script
+      shell: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+      args:
+        executable: /bin/bash
+      register: trivy_install
+
+    - name: Verify Trivy installation
+      command: trivy --version
+      register: trivy_version
+      changed_when: false
+
+    - name: Show installed Trivy version
+      debug:
+        var: trivy_version.stdout
+
+    - name: Ensure Jenkins has AWS credentials directory
+      file:
+        path: /var/lib/jenkins/.aws
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: "0700"
+
+    - name: Create AWS credentials file (dummy placeholders)
+      copy:
+        dest: /var/lib/jenkins/.aws/credentials
+        content: |
+          [default]
+          aws_access_key_id = ***
+          aws_secret_access_key = ***
+        owner: jenkins
+        group: jenkins
+        mode: "0600"
+
+    - name: Create AWS config file
+      copy:
+        dest: /var/lib/jenkins/.aws/config
+        content: |
+          [default]
+          region = us-east-1
+          output = json
+        owner: jenkins
+        group: jenkins
+        mode: "0600"
+
+    - name: Restart Jenkins to apply Docker group membership
+      systemd:
+        name: jenkins
+        state: restarted
