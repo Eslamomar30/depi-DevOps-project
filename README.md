@@ -2,9 +2,7 @@
 
 A **MERN**-stack project: a student certificate delivery platform with an admin dashboard and a simple public site. Fully automated CI/CD pipeline on AWS, with infrastructure as code, configuration management, containerization, orchestration, quality gates, and monitoring.
 
-## 🎥 Demo Video
 
-▶️ [Watch the demo on YouTube](https://youtu.be/hyQF2E94qrA)
 
 ---
 
