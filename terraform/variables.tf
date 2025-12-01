@@ -35,26 +35,26 @@ variable "cluster_name" {
 variable "eks_node_instance_type" {
   description = "Instance type for EKS worker nodes"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.micro"
 }
 
 variable "eks_node_count" {
   description = "Number of worker nodes in EKS cluster"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "eks_max_node_count" {
   description = "Maximum number of worker nodes for scaling"
   type        = number
-  default     = 3
+  default     = 2
 }
 
 # Jenkins Configuration
 variable "jenkins_instance_type" {
   description = "Instance type for Jenkins server"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.micro"
 }
 
 # Backup Configuration

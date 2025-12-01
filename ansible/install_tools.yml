@@ -4,17 +4,16 @@
   become: yes
   vars:
     kubectl_version: "v1.30.1"
-    sonar_scanner_version: "5.0.1.3006"
     sonar_scanner_home: "/opt/sonar-scanner"
 
   tasks:
-
     - name: Install dependencies
       apt:
         name:
-          - curl
           - unzip
+          - curl
           - openjdk-17-jdk
+        state: present
         update_cache: yes
 
     - name: Download kubectl
@@ -25,12 +24,11 @@
 
     - name: Verify kubectl installation
       command: kubectl version --client
-      register: kubectl_check
-      changed_when: false
+      register: kubectl_version_result
 
     - name: Print kubectl version
       debug:
-        msg: "{{ kubectl_check.stdout }}"
+        msg: "{{ kubectl_version_result.stdout }}"
 
     - name: Create sonar-scanner directory
       file:
@@ -38,35 +36,14 @@
         state: directory
         mode: '0755'
 
-    - name: Download SonarScanner
+    - name: Download and extract SonarScanner
       unarchive:
-        src: "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-{{ sonar_scanner_version }}-linux.zip"
+        src: "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
         dest: "{{ sonar_scanner_home }}"
         remote_src: yes
         extra_opts: [--strip-components=1]
+      when: not ansible.builtin.stat(path=sonar_scanner_home).stat.exists
+      ignore_errors: yes
+      tags:
+        - sonar
 
-    - name: Create symlink for sonar-scanner
-      file:
-        src: "{{ sonar_scanner_home }}/bin/sonar-scanner"
-        dest: /usr/local/bin/sonar-scanner
-        state: link
-        force: yes
-
-    - name: Configure sonar-scanner default properties
-      copy:
-        dest: "{{ sonar_scanner_home }}/conf/sonar-scanner.properties"
-        content: |
-          sonar.sourceEncoding=UTF-8
-          sonar.java.binaries=.
-          # Default server config (can be overridden in CLI or Jenkins env)
-          # sonar.host.url=http://your-sonarqube-url
-          # sonar.login=your_token
-
-    - name: Verify sonar-scanner installation
-      command: sonar-scanner --version
-      register: sonar_check
-      changed_when: false
-
-    - name: Print sonar-scanner version
-      debug:
-        msg: "{{ sonar_check.stdout }}"

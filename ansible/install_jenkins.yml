@@ -4,8 +4,6 @@
   become: yes
 
   vars:
-    jenkins_repo_key_url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
-    jenkins_repo: "deb https://pkg.jenkins.io/debian-stable binary/"
     jenkins_url: http://localhost:8080
     jenkins_cli_dest: /tmp/jenkins-cli.jar
 
@@ -14,27 +12,34 @@
     - name: Update APT package cache
       apt:
         update_cache: yes
- 
+
     - name: Install Java (required for Jenkins)
       apt:
-        name: openjdk-11-jdk
+        name: openjdk-17-jdk
         state: present
+        update_cache: yes
 
-    - name: Download Jenkins GPG key to trusted.gpg.d
+    # NEW — Correct Jenkins key
+    - name: Add Jenkins repository key
       get_url:
-        url: "{{ jenkins_repo_key_url }}"
-        dest: /etc/apt/trusted.gpg.d/jenkins.asc
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
         mode: '0644'
 
+    # NEW — Correct repo with signed-by
     - name: Add Jenkins repository
       apt_repository:
-        repo: "{{ jenkins_repo }}"
+        repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
         state: present
+        filename: jenkins
+
+    - name: Update APT cache after adding Jenkins repo
+      apt:
+        update_cache: yes
 
     - name: Install Jenkins
       apt:
         name: jenkins
-        update_cache: yes
         state: present
 
     - name: Ensure Jenkins is started and enabled
@@ -50,7 +55,7 @@
         status_code: 200
         validate_certs: no
       register: jenkins_ready
-      retries: 10
+      retries: 15
       delay: 5
       until: jenkins_ready.status == 200
 
@@ -59,3 +64,4 @@
         url: "{{ jenkins_url }}/jnlpJars/jenkins-cli.jar"
         dest: "{{ jenkins_cli_dest }}"
         mode: '0755'
+

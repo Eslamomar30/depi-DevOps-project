@@ -1,0 +1,66 @@
+{
+    "RecoveryPoints": [
+        {
+            "RecoveryPointArn": "arn:aws:ec2:us-east-1::image/ami-02938dd11bd4f30ee",
+            "BackupVaultName": "jenkins-backup-vault",
+            "BackupVaultArn": "arn:aws:backup:us-east-1:996417348492:backup-vault:jenkins-backup-vault",
+            "ResourceArn": "arn:aws:ec2:us-east-1:996417348492:instance/i-0055494b68368b4e9",
+            "ResourceType": "EC2",
+            "CreatedBy": {
+                "BackupPlanId": "82079381-e1f6-4175-86b7-5c96c6c25de0",
+                "BackupPlanArn": "arn:aws:backup:us-east-1:996417348492:backup-plan:82079381-e1f6-4175-86b7-5c96c6c25de0",
+                "BackupPlanVersion": "MjA3MzlkOGYtN2I0Ni00NmI1LTgzNDItMWJkMzhkNjA0MmMx",
+                "BackupRuleId": "6790dc64-36e1-4c29-a32f-2dc411c52224"
+            },
+            "IamRoleArn": "arn:aws:iam::996417348492:role/aws-backup-role",
+            "Status": "COMPLETED",
+            "CreationDate": "2025-11-30T04:00:00+02:00",
+            "InitiationDate": "2025-11-30T04:12:44.538000+02:00",
+            "CompletionDate": "2025-11-30T04:18:21.597000+02:00",
+            "BackupSizeInBytes": 8589934592,
+            "CalculatedLifecycle": {
+                "DeleteAt": "2025-12-07T04:00:00+02:00"
+            },
+            "Lifecycle": {
+                "DeleteAfterDays": 7
+            },
+            "IsEncrypted": false,
+            "IsParent": false,
+            "ResourceName": "Jenkins-Server",
+            "VaultType": "BACKUP_VAULT"
+        }
+    ]
+}
+{
+    "RecoveryPoints": [
+        {
+            "RecoveryPointArn": "arn:aws:ec2:us-east-1::image/ami-0d563be0bc102f563",
+            "BackupVaultName": "jenkins-backup-vault",
+            "BackupVaultArn": "arn:aws:backup:us-east-1:996417348492:backup-vault:jenkins-backup-vault",
+            "ResourceArn": "arn:aws:ec2:us-east-1:996417348492:instance/i-0cf875dde70ca5365",
+            "ResourceType": "EC2",
+            "CreatedBy": {
+                "BackupPlanId": "c68e5abe-a47a-43f6-9b0e-c902ded57242",
+                "BackupPlanArn": "arn:aws:backup:us-east-1:996417348492:backup-plan:c68e5abe-a47a-43f6-9b0e-c902ded57242",
+                "BackupPlanVersion": "ZDVlNWNiNjMtZjU3OC00OTUyLTk4YjctNDk1Zjk1OWVkZjFh",
+                "BackupRuleId": "b74ecc7d-ac58-4dba-9f6b-a21c8ab0d325"
+            },
+            "IamRoleArn": "arn:aws:iam::996417348492:role/aws-backup-role",
+            "Status": "COMPLETED",
+            "CreationDate": "2025-12-01T04:00:00+02:00",
+            "InitiationDate": "2025-12-01T04:16:29.721000+02:00",
+            "CompletionDate": "2025-12-01T04:22:47.381000+02:00",
+            "BackupSizeInBytes": 8589934592,
+            "CalculatedLifecycle": {
+                "DeleteAt": "2025-12-08T04:00:00+02:00"
+            },
+            "Lifecycle": {
+                "DeleteAfterDays": 7
+            },
+            "IsEncrypted": false,
+            "IsParent": false,
+            "ResourceName": "Jenkins-Server",
+            "VaultType": "BACKUP_VAULT"
+        }
+    ]
+}
