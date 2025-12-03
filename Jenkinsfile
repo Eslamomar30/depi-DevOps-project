@@ -3,8 +3,8 @@ pipeline {
 
   environment {
     AWS_REGION = 'us-east-1'
-    ECR_BACKEND = '176381609267.dkr.ecr.us-east-1.amazonaws.com/backend'
-    ECR_FRONTEND = '176381609267.dkr.ecr.us-east-1.amazonaws.com/frontend'
+    ECR_BACKEND = '996417348492.dkr.ecr.us-east-1.amazonaws.com/backend'
+    ECR_FRONTEND = '996417348492.dkr.ecr.us-east-1.amazonaws.com/frontend'
     SONAR_TOKEN = credentials('sonarqube-token')
   }
 
@@ -23,7 +23,7 @@ pipeline {
             /opt/sonar-scanner/bin/sonar-scanner \
               -Dsonar.projectKey=nti-app \
               -Dsonar.sources=. \
-              -Dsonar.host.url=http://13.220.161.33:9000 \
+              -Dsonar.host.url=http://3.83.64.206:9000 \
               -Dsonar.login=$SONAR_TOKEN
           '''
         }
@@ -49,7 +49,7 @@ pipeline {
             sh """
               docker build -t ${image} .
               trivy image --exit-code 1 --severity HIGH,CRITICAL ${image}
-              aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 176381609267.dkr.ecr.us-east-1.amazonaws.com
+              aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 996417348492.dkr.ecr.us-east-1.amazonaws.com
               docker push ${image}
             """
           }
@@ -67,7 +67,7 @@ pipeline {
             sh """
               docker build -t ${image} .
               trivy image --exit-code 1 --severity HIGH,CRITICAL ${image}
-              aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 176381609267.dkr.ecr.us-east-1.amazonaws.com
+              aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin 996417348492.dkr.ecr.us-east-1.amazonaws.com
               docker push ${image}
             """
           }

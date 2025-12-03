@@ -37,7 +37,7 @@
         remote_src: yes
 
     - name: Rename extracted folder
-      command: mv /opt/sonarqube-* /opt/sonarqube
+      shell: mv /opt/sonarqube-* /opt/sonarqube
       args:
         creates: /opt/sonarqube
 

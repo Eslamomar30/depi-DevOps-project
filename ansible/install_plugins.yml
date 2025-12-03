@@ -9,6 +9,9 @@
     jenkins_user: admin
     plugin_list:
       - git
+      - github
+      - github-branch-source
+      - github-pullrequest
       - docker-plugin
       - workflow-aggregator
       - nodejs
@@ -16,6 +19,7 @@
       - sonar
       - credentials-binding
       - aws-credentials
+      - pipeline-github-lib
 
   tasks:
     - name: Ensure Java is installed
