@@ -1,6 +1,6 @@
 # Depi DevOps : final project: End-to-End Automated CI/CD Pipeline on AWS for Student Certificate Delivery
 
-A **MERN**-stack project: a student certificate delivery platform with an admin dashboard and a simple public site. Fully automated CI/CD pipeline on AWS, with infrastructure as code, configuration management, containerization, orchestration, quality gates, and monitoring.
+A **MERN**-stack project: a student certificate delivery platform with an admin dashboard and a simple public site. Fully automated CI/CD pipeline on AWS, with infrastructure as code, configuration management, containerization, orchestration, quality gates, and monitoring  .
 
 
 
