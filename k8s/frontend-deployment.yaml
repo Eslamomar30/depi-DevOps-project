@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 176381609267.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+          image: 996417348492.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
